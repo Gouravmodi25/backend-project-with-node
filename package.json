@@ -1,0 +1,12 @@
+{
+  "name": "backend-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js -e js,ejs,html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
