@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
-require("dotenv").config({ path: "./env" });
+require("dotenv").config({ path: "./.env" });
 
 // router import
 const userRouter = require("./routes/user.routes.js");

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const connectDB = require("./db/connection");
-require("dotenv").config({ path: "./env" });
+require("dotenv").config({ path: "./.env" });
 const app = require("./app");
 const PORT = process.env.PORT || 3000;
 
