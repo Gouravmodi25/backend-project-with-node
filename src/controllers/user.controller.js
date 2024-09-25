@@ -5,6 +5,7 @@ const uploadOnCloudinary = require("../utils/cloudinary.js");
 const ApiResponse = require("../utils/ApiResponse.js");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const getRefreshAndAccessToken = async (userId) => {
   try {
@@ -221,12 +222,18 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const changePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
-  const user = await User.findById(req.user?._id);
+  const user = await User.findById(req.user?._id).select("+password");
 
-  const isPasswordCorrect = user.isPasswordCorrect(oldPassword);
+  const isUserPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
-  if (!isPasswordCorrect) {
+  if (!isUserPasswordCorrect) {
     throw new ApiError(400, "Invalid Old Password");
+  }
+
+  const isSamePassword = await user.isSamePassword(newPassword);
+  console.log(isSamePassword);
+  if (isSamePassword) {
+    throw new ApiError(400, "New password should not same as old password");
   }
 
   user.password = newPassword;
@@ -234,7 +241,7 @@ const changePassword = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, "Password Changed Successfully"));
+    .json(new ApiResponse(200, "Password Changed Successfully", {}));
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -248,6 +255,11 @@ const updateUserDetail = asyncHandler(async (req, res) => {
 
   if (!fullName && !email) {
     throw new ApiError(400, "All fields are required");
+  }
+
+  const isEmail = validator.isEmail(email);
+  if (!isEmail) {
+    throw new ApiError(400, "Email should be valid");
   }
 
   const user = await User.findByIdAndUpdate(
