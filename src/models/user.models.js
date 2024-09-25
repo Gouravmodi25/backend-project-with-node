@@ -60,6 +60,10 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+userSchema.methods.isSamePassword = async function (newPassword) {
+  return await bcrypt.compare(newPassword, this.password);
+};
+
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
