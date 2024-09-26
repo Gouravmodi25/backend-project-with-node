@@ -7,7 +7,7 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const deleteImageOnCloudinary = require("../utils/deleteImageOnCloudinary.js");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 const getRefreshAndAccessToken = async (userId) => {
   try {
@@ -424,7 +424,7 @@ const getChannelProfile = asyncHandler(async (req, res) => {
   console.log(channel);
 
   if (!channel?.length) {
-    throw new ApiError(400, "Channel doesnot exit");
+    throw new ApiError(400, "Channel does not exit");
   }
 
   return res
@@ -438,12 +438,12 @@ const getWatchHistory = asyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
       $match: {
-        _id: new mongoose.Schema.ObjectId(req.user?._id),
+        _id: req.user._id,
       },
     },
     {
       $lookup: {
-        form: "videos",
+        from: "videos",
         localField: "watchHistory",
         foreignField: "_id",
         as: "watchHistory",

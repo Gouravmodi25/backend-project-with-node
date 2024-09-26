@@ -13,10 +13,12 @@ const {
   updateUserAvatar,
   updateUserCoverImage,
   getChannelProfile,
+  getWatchHistory,
 } = require("../controllers/user.controller.js");
 
 const router = Router();
 
+// register user route
 router.route("/register").post(
   upload.fields([
     {
@@ -31,25 +33,39 @@ router.route("/register").post(
   registerUser
 );
 
+// login route
 router.route("/login").post(loginUser);
-// secured routes
-router.route("/logout").post(jwtVerify, logoutUser);
-router.route("/changePassword").post(jwtVerify, changePassword);
-router.route("/getCurrentUser").get(jwtVerify, getCurrentUser);
-router.route("/updateUserDetails").post(jwtVerify, updateUserDetail);
-// update avatar
 
+// secured routes
+// logout route
+router.route("/logout").post(jwtVerify, logoutUser);
+
+// change Password route
+router.route("/changePassword").post(jwtVerify, changePassword);
+
+// get current user after logged in
+router.route("/getCurrentUser").get(jwtVerify, getCurrentUser);
+
+// updateUserDetails route
+router.route("/updateUserDetails").patch(jwtVerify, updateUserDetail);
+
+// update avatar
 router
   .route("/updateUserAvatar")
-  .post(upload.single("avatar"), jwtVerify, updateUserAvatar);
+  .patch(upload.single("avatar"), jwtVerify, updateUserAvatar);
 
 // update coverImage
 router
   .route("/updateUserCoverImage")
-  .post(upload.single("coverImage"), jwtVerify, updateUserCoverImage);
+  .patch(upload.single("coverImage"), jwtVerify, updateUserCoverImage);
 
+// getChannelProfile route
 router.route("/getChannelProfile/:username").get(jwtVerify, getChannelProfile);
 
-router.route("/refresh-token").post(refreshAccessToken);
+// get watch history route
+router.route("/history").get(jwtVerify, getWatchHistory);
+
+// update refresh access token after logged in
+router.route("/refreshAccess-token").post(refreshAccessToken);
 
 module.exports = router;
