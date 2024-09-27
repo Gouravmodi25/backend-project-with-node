@@ -147,17 +147,17 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: null,
+      $unset: {
+        refreshToken: 1, //this will remove refresh token from user
       },
     },
     {
       new: true,
     }
-  );
+  ).select("-password");
 
   // console.log(user);
 
@@ -170,7 +170,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, "User Logged out", {}));
+    .json(new ApiResponse(200, "User Logged out", { user }));
 });
 
 // refresh access token
